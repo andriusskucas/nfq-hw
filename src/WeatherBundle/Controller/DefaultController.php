@@ -5,6 +5,8 @@ namespace WeatherBundle\Controller;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Weather\Location;
+use Weather\YahooWeatherProvider;
 
 class DefaultController extends Controller
 {
@@ -54,6 +56,10 @@ class DefaultController extends Controller
      */
     public function weatherAction($city)
     {
+        $location = new Location(22.1,22.3);
+        $provider = new YahooWeatherProvider();
+        $weather = $provider->fetch($location);
+
         $cityWeather = $this->getWeatherByCity($city);
 
         return $this->render('WeatherBundle:weather:weather.html.twig',[
