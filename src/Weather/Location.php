@@ -8,7 +8,7 @@ class Location
 
     private $latitude;
 
-    public function __construct($longitude, $latitude)
+    public function __construct( $latitude, $longitude)
     {
         $this->longitude = $longitude;
         $this->latitude = $latitude;
