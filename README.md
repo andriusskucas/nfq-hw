@@ -3,4 +3,6 @@ Weather app
 Small test project for NFQ academy homework
 All files are in WeatherBundlle
 
-A Symfony project created on October 25, 2016, 7:57 pm.
+## Second homework
+To test go to: http://localhost/weather/54.687157/25.279652
+Coordinates of Vilnius
