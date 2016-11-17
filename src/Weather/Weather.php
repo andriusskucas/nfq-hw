@@ -4,14 +4,21 @@ namespace Weather;
 
 class Weather
 {
-    private $temparature;
+    private $temperature;
 
-    public function __construct($temparature)
+    /**
+     * Weather constructor.
+     * @param int $temparature
+     */
+    public function __construct(int $temperature)
     {
-        $this->temparature = $temparature;
+        $this->temparature = $temperature;
     }
 
-    public function getTemperature()
+    /**
+     * @return int
+     */
+    public function getTemperature(): int
     {
         return $this->temparature;
     }

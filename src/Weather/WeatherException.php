@@ -1,12 +1,19 @@
 <?php
 namespace Weather;
-use Symfony\Component\Config\Definition\Exception\Exception;
+
+use \Exception;
 
 class WeatherException extends Exception
 {
-    public function errorMessage() {
-        //error message
-        $errorMsg = __CLASS__.' '.$this->getMessage();
-        return $errorMsg;
+    /**
+     * WeatherException constructor.
+     * @param null $message
+     * @param int $code
+     * @param Exception|null $previous
+     */
+    public function __construct($message = null, $code = 0, Exception $previous = null)
+    {
+        $extendedMessage = __CLASS__ . ' ' . $message;
+        parent::__construct($extendedMessage, $code, $previous);
     }
 }

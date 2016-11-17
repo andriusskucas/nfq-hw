@@ -6,70 +6,78 @@ use Weather\Weather;
 use Weather\WeatherProviderInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use DateTime;
 
 
 class CachedWeatherProvider implements WeatherProviderInterface
 {
-    private $cacheFileName;
+    const CASHED_WEATHER_FILENAME = 'cachedWeather.json';
     private $provider;
-    private $weather;
     private $file;
-    private $decodedFile;
 
 
-    public function __construct($provider)
+    /**
+     * CachedWeatherProvider constructor.
+     * @param \Weather\WeatherProviderInterface $provider
+     */
+    public function __construct(WeatherProviderInterface $provider)
     {
-        $this->cacheFileName = 'cachedWeather.json';
         $this->provider = $provider;
     }
 
-    public function fetch(Location $location)
+    /**
+     * @param Location $location
+     * @return \Weather\Weather
+     */
+    public function fetch(Location $location): Weather
     {
         $fs = new Filesystem();
 
-        if($fs->exists($this->cacheFileName)){
-            $this->file = json_decode(file_get_contents($this->cacheFileName),true);
+        if (!$fs->exists(self::CASHED_WEATHER_FILENAME))
+            return $this->getNewData($location, $fs);
 
-            if(isset($this->file[$location->getLatitude().'_'.$location->getLongitude()])){
-                $currentLocationData = $this->file[$location->getLatitude().'_'.$location->getLongitude()];
-                $date = date('YmdHis');
-                if($date - $currentLocationData['last_updated'] > 100){
-                    $this->getNewData($location,$fs);
-                }else{
-                    $this->weather = new Weather($currentLocationData['temp']);
-                }
+        $this->file = json_decode(file_get_contents(self::CASHED_WEATHER_FILENAME), true);
+        $current_location = $location->getLatitude() . '_' . $location->getLongitude();
 
-            }else{
-                $this->getNewData($location,$fs);
-            }
-        }else{
-            $this->getNewData($location,$fs);
-        }
+        if (!isset($this->file[$current_location]))
+            return $this->getNewData($location, $fs);
+
+        $currentLocationData = $this->file[$location->getLatitude() . '_' . $location->getLongitude()];
+        $date = date('YmdHis');
+
+        if ($date - $currentLocationData['last_updated'] > 100)
+            return $this->getNewData($location, $fs);
 
 
-        return $this->weather;
+        return new Weather($currentLocationData['temp']);
     }
 
-    private function getNewData($location,$fs)
+    /**
+     * @param Location $location
+     * @param Filesystem $fs
+     * @return \Weather\Weather
+     */
+    private function getNewData(Location $location, Filesystem $fs): Weather
     {
-        echo 'Atnaujino';
-        $this->weather = $this->provider->fetch($location);
+        $weather = $this->provider->fetch($location);
 
         // Form array
         $infoArray = [];
-        if(count($this->file) > 0)
+        if (count($this->file) > 0)
             $infoArray = $this->file;
 
         $date = date('YmdHis');
-        $infoArray[$location->getLatitude().'_'.$location->getLongitude()] = ['temp'=>$this->weather->getTemperature(),'last_updated'=>$date];
+        $infoArray[$location->getLatitude() . '_' . $location->getLongitude()] =
+            ['temp' => $weather->getTemperature(), 'last_updated' => $date];
+
         $json = json_encode($infoArray);
+
         try {
-            $fs->dumpFile($this->cacheFileName, $json);
-        }
-        catch(IOException $e) {
+            $fs->dumpFile(self::CASHED_WEATHER_FILENAME, $json);
+        } catch (IOException $e) {
             // Do nothing
-            echo $e->getMessage();
         }
+
+        return $weather;
     }
+
 }
