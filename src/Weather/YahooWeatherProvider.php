@@ -24,6 +24,7 @@ class YahooWeatherProvider implements WeatherProviderInterface
             'base_uri' => self::BASE_URL,
             'timeout' => 2.0,
         ]);
+        
         $response = $client->request('GET', "?q=" . urlencode($yql_query) . "&format=json");
         $allWeatherInfo = json_decode($response->getBody());
 
