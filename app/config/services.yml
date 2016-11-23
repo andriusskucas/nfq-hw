@@ -1,11 +1,37 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
+  yahoo.base_url: 'http://query.yahooapis.com/v1/public/yql'
+  wunderground.base_url: 'http://api.wunderground.com/api/'
+  wunderground.api_key: '6d59babb57804f5e'
+  cached.ttl: 600
+
 
 services:
-  cache:
-          class: Doctrine\Common\Cache\ApcCache
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  yahoo_http_client:
+    class: Weather\HTTPClients\YahooHttpClient
+
+  wunderground_http_client:
+    class: Weather\HTTPClients\WundergroundHttpClient
+
+  yahoo_data_parser:
+    class: Weather\Parsers\YahooDataParser
+
+  wunderground_data_parser:
+    class: Weather\Parsers\WundergroundDataParser
+
+  yahoo_weather_service:
+    class: Weather\YahooWeatherProvider
+    arguments: ['@yahoo_http_client','@yahoo_data_parser','%yahoo.base_url%']
+
+  wunderground_weather_service:
+    class: Weather\WundergroundWeatherProvider
+    arguments: ['@wunderground_http_client','@wunderground_data_parser','%wunderground.base_url%','%wunderground.api_key%']
+
+  delegated_weather_service:
+    class: Weather\DelegateWeatherProvider
+    arguments: [['@yahoo_weather_service','@wunderground_weather_service']]
+
+  cache_weather_service:
+    class: Weather\CachedWeatherProvider
+    arguments: ['@delegated_weather_service','%cached.ttl%']

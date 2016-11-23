@@ -2,15 +2,10 @@
 
 namespace WeatherBundle\Controller;
 
-use GuzzleHttp\Client;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Weather\CachedWeatherProvider;
 use Weather\Location;
-use Weather\WeatherException;
-use Weather\WunderGroundWeatherProvider;
-use Weather\YahooWeatherProvider;
-use Weather\DelegateWeatherProvider;
 
 class DefaultController extends Controller
 {
@@ -31,9 +26,7 @@ class DefaultController extends Controller
     {
         //$location = new Location(54.687157,25.279652);
         $location = new Location($latitude, $longitude);
-        $provider = new CachedWeatherProvider(
-            new YahooWeatherProvider()
-        );
+        $provider = $this->get('cache_weather_service');
 
         $weather = $provider->fetch($location);
 

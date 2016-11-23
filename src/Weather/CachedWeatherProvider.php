@@ -11,15 +11,18 @@ class CachedWeatherProvider implements WeatherProviderInterface
 {
 
     private $provider;
+    private $ttl;
 
 
     /**
      * CachedWeatherProvider constructor.
      * @param \Weather\WeatherProviderInterface $provider
+     * @param Int $ttl
      */
-    public function __construct(WeatherProviderInterface $provider)
+    public function __construct(WeatherProviderInterface $provider, Int $ttl)
     {
         $this->provider = $provider;
+        $this->ttl = $ttl;
     }
 
     /**
@@ -33,9 +36,9 @@ class CachedWeatherProvider implements WeatherProviderInterface
 
         $cache = new FilesystemAdapter();
         $temperatureItem = $cache->getItem($current_location);
-        $temperatureItem->expiresAfter(600);
+        $temperatureItem->expiresAfter($this->ttl);
 
-        if(!$temperatureItem->isHit()){
+        if (!$temperatureItem->isHit()) {
             $weather = $this->provider->fetch($location);
             $temperatureItem->set(serialize($weather->getTemperature()));
 

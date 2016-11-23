@@ -3,14 +3,34 @@
 namespace Weather;
 
 use GuzzleHttp\Client;
+use Weather\HTTPClients\WundergroundHttpClient;
+use Weather\Parsers\WundergroundDataParser;
 use Weather\WeatherProviderInterface;
 use Weather\Weather;
 use Weather\WeatherException;
 
-class WunderGroundWeatherProvider implements WeatherProviderInterface
+class WundergroundWeatherProvider implements WeatherProviderInterface
 {
-    const BASE_URL = "http://api.wunderground.com/api/";
-    const API_KEY = '6d59babb57804f5e';
+
+    protected $base_url;
+    protected $api_key;
+    protected $httpClient;
+    protected $dataParser;
+
+    /**
+     * WundergroundWeatherProvider constructor.
+     * @param WundergroundHttpClient $httpClient
+     * @param WundergroundDataParser $dataParser
+     * @param String $base_url
+     * @param String $api_key
+     */
+    public function __construct(WundergroundHttpClient $httpClient, WundergroundDataParser $dataParser, String $base_url, String $api_key)
+    {
+        $this->HTTPClient = $httpClient;
+        $this->dataParser = $dataParser;
+        $this->base_url = $base_url;
+        $this->api_key = $api_key;
+    }
 
     /**
      * @param Location $location
@@ -18,20 +38,15 @@ class WunderGroundWeatherProvider implements WeatherProviderInterface
      */
     public function fetch(Location $location): Weather
     {
-        $client = new Client([
-            'base_uri' => self::BASE_URL,
-            'timeout' => 2.0,
-        ]);
-        $response = $client->request(
-            'GET',
-            self::API_KEY . '/conditions/q/' . $location->getLatitude() . ',' . $location->getLongitude() . '.json'
-        );
-        $allWeatherInfo = json_decode($response->getBody());
 
-        if (!isset($allWeatherInfo->current_observation) || $allWeatherInfo->current_observation->temp_c == null) {
-            throw new WeatherException("Could not load Weather data");
-        }
+        $response = $this . $this->HTTPClient->get(
+                $this->base_url,
+                ['latitude' => $location->getLatitude(), 'longitude' => $location->getLongitude()],
+                $this->api_key
+            );
 
-        return new Weather($allWeatherInfo->current_observation->temp_c);
+        $temperature = $this->dataParser->parseTemperature($response);
+
+        return new Weather($temperature);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace Weather;
 
-use GuzzleHttp\Client;
+use Weather\Parsers\YahooDataParser;
 use Weather\WeatherProviderInterface;
 use Weather\Weather;
 use Weather\Location;
@@ -9,7 +9,22 @@ use Weather\Location;
 class YahooWeatherProvider implements WeatherProviderInterface
 {
 
-    const BASE_URL = "http://query.yahooapis.com/v1/public/yql";
+    protected $base_url;
+    protected $httpClient;
+    protected $dataParser;
+
+    /**
+     * YahooWeatherProvider constructor.
+     * @param $httpClient
+     * @param YahooDataParser $dataParser
+     * @param String $base_url
+     */
+    public function __construct($httpClient, YahooDataParser $dataParser, String $base_url)
+    {
+        $this->HTTPClient = $httpClient;
+        $this->dataParser = $dataParser;
+        $this->base_url = $base_url;
+    }
 
     /**
      * @param \Weather\Location $location
@@ -18,22 +33,12 @@ class YahooWeatherProvider implements WeatherProviderInterface
     public function fetch(Location $location): Weather
     {
 
-        $yql_query = 'select * from weather.forecast where woeid in (SELECT woeid FROM geo.places WHERE text="(' . $location->getLatitude() . ',' . $location->getLongitude() . ')") and u="c"';
 
-        $client = new Client([
-            'base_uri' => self::BASE_URL,
-            'timeout' => 2.0,
-        ]);
-        
-        $response = $client->request('GET', "?q=" . urlencode($yql_query) . "&format=json");
-        $allWeatherInfo = json_decode($response->getBody());
 
-        if (!isset($allWeatherInfo->query->results->channel->item->condition->temp)
-            || empty($allWeatherInfo->query->results->channel->item->condition->temp)
-        ) {
-            throw new WeatherException("Could not load Weather data");
-        }
+        $response = $this->HTTPClient->get($this->base_url, ['latitude' => $location->getLatitude(), 'longitude' => $location->getLongitude()]);
 
-        return new Weather($allWeatherInfo->query->results->channel->item->condition->temp);
+        $temperature = $this->dataParser->parseTemperature($response);
+
+        return new Weather($temperature);
     }
 }
