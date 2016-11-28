@@ -1,10 +1,10 @@
 <?php
-namespace Weather;
+namespace WeatherBundle\Providers;
 
-use Weather\Parsers\YahooDataParser;
-use Weather\WeatherProviderInterface;
-use Weather\Weather;
-use Weather\Location;
+use WeatherBundle\Parsers\YahooDataParser;
+use WeatherBundle\Providers\WeatherProviderInterface;
+use WeatherBundle\Weather;
+use WeatherBundle\Location;
 
 class YahooWeatherProvider implements WeatherProviderInterface
 {
@@ -27,8 +27,8 @@ class YahooWeatherProvider implements WeatherProviderInterface
     }
 
     /**
-     * @param \Weather\Location $location
-     * @return \Weather\Weather
+     * @param Location $location
+     * @return Weather
      */
     public function fetch(Location $location): Weather
     {

@@ -1,5 +1,5 @@
 <?php
-namespace Weather\Parsers;
+namespace WeatherBundle\Parsers;
 
 class WundergroundDataParser
 {

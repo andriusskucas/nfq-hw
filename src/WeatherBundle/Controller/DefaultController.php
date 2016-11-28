@@ -5,7 +5,7 @@ namespace WeatherBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Weather\Location;
+use WeatherBundle\Location;
 
 class DefaultController extends Controller
 {
@@ -26,7 +26,7 @@ class DefaultController extends Controller
     {
         //$location = new Location(54.687157,25.279652);
         $location = new Location($latitude, $longitude);
-        $provider = $this->get('cache_weather_service');
+        $provider = $this->get('weather');
 
         $weather = $provider->fetch($location);
 

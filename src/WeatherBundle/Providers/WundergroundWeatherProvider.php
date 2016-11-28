@@ -1,13 +1,14 @@
 <?php
 
-namespace Weather;
+namespace WeatherBundle\Providers;
 
 use GuzzleHttp\Client;
-use Weather\HTTPClients\WundergroundHttpClient;
-use Weather\Parsers\WundergroundDataParser;
-use Weather\WeatherProviderInterface;
-use Weather\Weather;
-use Weather\WeatherException;
+use WeatherBundle\HTTPClients\WundergroundHttpClient;
+use WeatherBundle\Parsers\WundergroundDataParser;
+use WeatherBundle\Weather;
+use WeatherBundle\Location;
+use WeatherBundle\Providers\WeatherProviderInterface;
+use WeatherBundle\WeatherException;
 
 class WundergroundWeatherProvider implements WeatherProviderInterface
 {
@@ -26,6 +27,7 @@ class WundergroundWeatherProvider implements WeatherProviderInterface
      */
     public function __construct(WundergroundHttpClient $httpClient, WundergroundDataParser $dataParser, String $base_url, String $api_key)
     {
+
         $this->HTTPClient = $httpClient;
         $this->dataParser = $dataParser;
         $this->base_url = $base_url;
@@ -34,7 +36,7 @@ class WundergroundWeatherProvider implements WeatherProviderInterface
 
     /**
      * @param Location $location
-     * @return \Weather\Weather
+     * @return Weather
      */
     public function fetch(Location $location): Weather
     {

@@ -67,3 +67,23 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+weather:
+    provider: delegating
+    providers:
+      yahoo:
+        base_url: 'http://query.yahooapis.com/v1/public/yql'
+
+      wunderground:
+        base_url: 'http://api.wunderground.com/api/'
+        api_key: '6d59babb57804f5e'
+
+      delegating:
+        providers:
+          - yahoo
+          - wunderground
+
+      cached:
+        provider: delegating
+        ttl: 600
+

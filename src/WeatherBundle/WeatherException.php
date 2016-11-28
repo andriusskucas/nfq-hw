@@ -1,5 +1,5 @@
 <?php
-namespace Weather;
+namespace WeatherBundle;
 
 use \Exception;
 

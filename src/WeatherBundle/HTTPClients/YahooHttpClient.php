@@ -1,5 +1,5 @@
 <?php
-namespace Weather\HTTPClients;
+namespace WeatherBundle\HTTPClients;
 
 use GuzzleHttp\Client;
 

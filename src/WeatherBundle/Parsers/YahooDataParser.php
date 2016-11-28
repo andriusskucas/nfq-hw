@@ -1,6 +1,6 @@
 <?php
 
-namespace Weather\Parsers;
+namespace WeatherBundle\Parsers;
 
 class YahooDataParser
 {

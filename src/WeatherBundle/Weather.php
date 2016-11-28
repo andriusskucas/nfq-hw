@@ -1,6 +1,6 @@
 <?php
 
-namespace Weather;
+namespace WeatherBundle;
 
 class Weather
 {

@@ -1,4 +1,1 @@
 services:
-#    weather.example:
-#        class: WeatherBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]

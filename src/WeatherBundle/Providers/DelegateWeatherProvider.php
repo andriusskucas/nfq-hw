@@ -1,8 +1,10 @@
 <?php
 
-namespace Weather;
+namespace WeatherBundle\Providers;
 
-use Weather\WeatherProviderInterface;
+use WeatherBundle\Location;
+use WeatherBundle\Providers\WeatherProviderInterface;
+use WeatherBundle\Weather;
 
 class DelegateWeatherProvider implements WeatherProviderInterface
 {
@@ -38,8 +40,10 @@ class DelegateWeatherProvider implements WeatherProviderInterface
         return $this->weather;
     }
 
+    
+
     /**
-     * @param \Weather\WeatherProviderInterface $provider
+     * @param WeatherProviderInterface $provider
      * @param Location $location
      * @return bool
      */

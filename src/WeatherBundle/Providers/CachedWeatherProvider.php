@@ -1,9 +1,10 @@
 <?php
 
-namespace Weather;
+namespace WeatherBundle\Providers;
 
-use Weather\Weather;
-use Weather\WeatherProviderInterface;
+use WeatherBundle\Weather;
+use WeatherBundle\Location;
+use WeatherBundle\Providers\WeatherProviderInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 
@@ -16,7 +17,7 @@ class CachedWeatherProvider implements WeatherProviderInterface
 
     /**
      * CachedWeatherProvider constructor.
-     * @param \Weather\WeatherProviderInterface $provider
+     * @param WeatherProviderInterface $provider
      * @param Int $ttl
      */
     public function __construct(WeatherProviderInterface $provider, Int $ttl)
@@ -27,7 +28,7 @@ class CachedWeatherProvider implements WeatherProviderInterface
 
     /**
      * @param Location $location
-     * @return \Weather\Weather
+     * @return Weather
      */
     public function fetch(Location $location): Weather
     {
